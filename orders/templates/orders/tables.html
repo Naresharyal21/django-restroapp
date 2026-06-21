@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Table list</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet"
+href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+</head>
+<body>
+  {% if messages %}
+    {% for message in messages %}
+    <script>
+        Toastify({
+            text: "{{ message }}",
+            duration: 4000,
+            gravity: "top",
+            position: "left",
+            style: {
+                background: "green"
+            }
+        }).showToast();
+    </script>
+    {% endfor %}
+{% endif %}
+  <div class=" flex flex-col">
+  <nav class="h-16 bg-purple-500 w-full flex justify-between items-center">
+    <h1 class='pl-[30%]'>Select the avilable table below</h1>
+    <div class="mr-5 border border-black-500 bg-blue-200 rounded pr-1 pl-1 cursor-pointer"id='button'>Logout</div>
+</nav>
+
+<script>   
+logout=document.getElementById('button');
+logout.addEventListener("click",()=>{
+  window.location.href= "{% url 'logout_url' %}"
+})
+</script>
+<div class="flex">
+  <div class="tablelist w-[70%] p-4">
+    <div class="grid grid-cols-5 gap-5">
+
+      {% for table in tables %}
+      <a href="{% url 'menu_view_url' table.id %}">
+        <div class="h-48  flex items-center justify-center border rounded shadow shadow-red-500">
+          {{ table.name }}
+        </div>
+      </a>
+      {% endfor %}
+
+    </div>
+  </div>
+
+  <div class="w-[30%] p-4">
+    <p>
+      Mr. {{ request.user.first_name }} {{ request.user.last_name }} <br>
+      Position: {{ request.user.get_role_display }}
+    </p>
+  </div>
+</div>
+  
+</body>
+</html>

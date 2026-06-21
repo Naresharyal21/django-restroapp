@@ -38,6 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'accounts',
+    'orders',
+    'django.contrib.humanize',
+    
 ]
 
 MIDDLEWARE = [
@@ -117,3 +120,4 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 AUTH_USER_MODEL="accounts.User"
+SESSION_COOKIE_AGE=60*60*24*30

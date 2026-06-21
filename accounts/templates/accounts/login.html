@@ -4,32 +4,64 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet"
+href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <title>Login form</title>
 </head>
 <body>
   
  <div class="flex flex-col items-center justify-center h-screen ">
-
+<div class="text-blue-500 text-xl font-bold">Login to the system</div>
    <form method="POST">
-    <div class="text-blue-500 text-xl font-bold">Login to the system</h1></div>
-   <div class="flex flex-col items-center justify-center border shadow shadow-gray-500 rounded h-[250px] w-[300px] ">
+    {% csrf_token %}
+    
+   <div class="flex flex-col items-center justify-center border shadow shadow-gray-500 rounded h-[300px] w-[300px] ">
      
-     
+     {% for message in messages  %}
+     <p class="text-red-600"> {{ message}}</P>
+     {% endfor  %}
        
        <input type="text" name="username" placeholder="Enter user name" class="border border-gray-500 shadow shadow-gray-500 rounded w-[300px] mb-8 mt-10">
+       
+
+       <div class="flex ">  
       
+       <input type="password" name="password" id='password' placeholder="Enter password" class="border border-gray-500 rounded shadow shadow-gray-500 w-[300px] mb-8">
+         
+       <i class="bi bi-eye absolute ml-[255px] cursor-pointer"id="openeye"></i>
+      </div>
+
+      <script>
+        const password=document.getElementById("password");
+        const togglepassword=document.getElementById("openeye");
+
+        togglepassword.addEventListener("click", ()=>{
+         password.type=password.type==="password"?"text":"password"
+
+
+          togglepassword.className=password.type==="password"?
+          "bi bi-eye absolute ml-[255px] cursor-pointer":
+          "bi bi-eye-slash absolute ml-[255px] cursor-pointer"
+
+        })
+        </script>
+     
       
-        <input type="password" name="password" id='password' placeholder="Enter password" class="border border-gray-500 rounded shadow shadow-gray-500 w-[300px] mb-8">
-        
      
       
       
-      
+        
+        
         
         <button  type="submit" class="border border-gray-400 rounded w-[300px] mb-8 bg-green-500 shadow shadow-gray-500 "  >login</button>
-     
-       <button  class="border border-gray-400 rounded w-[100px] mb-8 shadow shadow-gray-500 "  >Signup</button>
-      
+
+        <div class="flex  justify-between w-full">
+          <input type="checkbox"id='remember_me' name='remember-me' class="ml-5 -mt-7" />
+          <span class="-ml-10">Remember me</span>
+
+        <a href=""  class="border border-gray-400 rounded w-[100px] mb-8 pl-5 shadow shadow-gray-500 mr-2 item-center "  >Signup</a>
+        
+      </div>
     </form>
   </div>
 
