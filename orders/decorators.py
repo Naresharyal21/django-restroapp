@@ -1,6 +1,7 @@
 from functools import wraps
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect
+from accounts.models import User
 
 def role_required(roles:list):
     def decorator(view_func):
@@ -15,3 +16,17 @@ def role_required(roles:list):
             return view_func(request, *args, **kwargs)
         return _wrapped_view
     return decorator
+
+
+# def station_required(stations):
+#     def decorator(view_func):
+#         def wrapper(request, *args, **kwargs):
+#           if request.user.role != User.ROLE_CHOICES.KITCHEN:
+#                 raise PermissionDenied
+
+#           if request.user.kitchen_station not in stations:
+#                 raise PermissionDenied
+#           return view_func(request, *args, **kwargs)
+            
+#         return wrapper
+#     return decorator

@@ -35,6 +35,8 @@ class  MenuItems(models.Model):
         LOW = '1', 'Low'
         
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="items")
+
+    
     station = models.ForeignKey(KitchenStation, on_delete=models.SET_NULL, null=True, related_name="items")
     
     name = models.CharField(max_length=200)

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ station_name }}</title>
+
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+
+</head>
+
+<body class="bg-slate-100 min-h-screen">
+
+<header class="sticky top-0 z-50 bg-white border-b border-slate-200 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 py-4">
+
+    <div class="flex items-center justify-between">
+
+        <div>
+            <h1 class="text-3xl font-bold text-slate-900">
+                S.d:{{ station_name }}
+            </h1>
+
+            <div class="mt-1 text-sm text-slate-500">
+                {{ request.user.first_name }} {{ request.user.last_name }}
+                <span class="mx-2">M.d:</span>
+                {{ request.user.get_role_display }}
+            </div>
+        </div>
+         <a href="{% url 'kitchen_dashboard_view_url' %}"
+   class="px-4 py-2 rounded-lg bg-green-900 text-white">
+    Back to Main Kitchen
+</a>
+
+        <a href="{% url 'logout_url' %}"
+           class="px-4 py-2 rounded-lg bg-red-500 hover:bg-red-600 text-white font-medium">
+            Logout
+        </a>
+
+    </div>
+
+</div>
+
+
+</header>
+
+<main class="max-w-5xl mx-auto p-6">
+
+
+<!-- Station Description -->
+<div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 mb-6">
+
+    {% if station == "steam" %}
+        <p class="text-slate-600">
+            Momo steaming and dumpling preparation.
+        </p>
+
+    {% elif station == "grill" %}
+        <p class="text-slate-600">
+            Sekuwa, Choila, Sukuti and grilled items.
+        </p>
+
+    {% elif station == "main_kitchen" %}
+        <p class="text-slate-600">
+            Dal Bhat, Thakali, Dhido and curry dishes.
+        </p>
+
+    {% elif station == "breakfast" %}
+        <p class="text-slate-600">
+            Breakfast and morning specials.
+        </p>
+
+    {% elif station == "beverage" %}
+        <p class="text-slate-600">
+            Tea, coffee and cold drinks.
+        </p>
+
+    {% elif station == "dessert" %}
+        <p class="text-slate-600">
+            Desserts and sweets.
+        </p>
+    {% endif %}
+
+</div>
+
+<section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+
+    <div class="px-5 py-4 bg-slate-900 text-white flex items-center justify-between">
+
+        <h2 class="font-bold text-lg">
+            Pending Orders
+        </h2>
+
+        <span class="bg-white/20 px-3 py-1 rounded-full text-sm">
+            {{ order_items|length }} Items
+        </span>
+
+    </div>
+
+    <div class="p-4 space-y-3">
+
+        {% for item in order_items %}
+
+        <div class="border border-slate-200 rounded-xl p-4 hover:bg-slate-50">
+
+            <div class="flex justify-between">
+
+                <div>
+                    <h3 class="font-semibold text-slate-900">
+                        {{ item }}
+                    </h3>
+
+                    <div class="mt-2 text-sm text-slate-500">
+                        Priority: {{ item.get_priority_display }}
+                    </div>
+                </div>
+
+                {% if item.priority == "3" %}
+                <span class="px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700">
+                    High
+                </span>
+
+                {% elif item.priority == "2" %}
+                <span class="px-3 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-700">
+                    Medium
+                </span>
+
+                {% else %}
+                <span class="px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700">
+                    Low
+                </span>
+                {% endif %}
+
+            </div>
+
+        </div>
+
+        {% empty %}
+
+        <div class="text-center py-10 text-slate-400">
+            No pending orders
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+
+</main>
+
+</body>
+</html>

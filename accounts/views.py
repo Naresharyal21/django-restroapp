@@ -1,6 +1,7 @@
 from django.shortcuts import render , redirect
 from django.contrib.auth import authenticate,login,logout
 from django.contrib import messages
+from .models import User
 
 
 # Create your views here.
@@ -17,6 +18,11 @@ def login_view(request):
     login(request , user)
     if remember_me is None:
       request.session.set_expiry(0)
+    if user.role == User.ROLE_CHOICES.WAITER:
+                return redirect("table_view_url")
+    elif user.role == User.ROLE_CHOICES.KITCHEN:
+                return redirect("kitchen_dashboard_view_url")
+                
     
     return redirect ("table_view_url")
     
