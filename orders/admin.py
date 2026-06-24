@@ -20,5 +20,9 @@ class OrderAdmin(admin.ModelAdmin):
 
 admin.site.register(KitchenStation)
 admin.site.register(Category)
-admin.site.register(OrderItem)
+# admin.site.register(OrderItem)
 admin.site.register(OrderHistory)
+
+@admin.register(OrderItem)
+class OrderItemAdmin(admin.ModelAdmin):
+    list_display = ["menu_item", "status"]

@@ -1,12 +1,19 @@
-from django.shortcuts import render ,redirect
+from django.shortcuts import render ,redirect , get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate,login,logout
 from .decorators import role_required 
 from accounts.models import User
 from .import signals #to activate active signals
-from .models import Table ,Category,Order,MenuItems,OrderItem
-import json
+from .models import Table ,Category,Order,MenuItems,OrderItem ,KitchenStation
+import json 
 from django.contrib import messages
+from urllib.parse import urlencode
+from django.db.models import Exists,OuterRef
+
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+from django.urls import reverse
+from django.http import JsonResponse
 
 # Create your views here.
 @role_required([User.ROLE_CHOICES.WAITER])
@@ -36,13 +43,27 @@ def menu_views(request , table_id):
 
     for orderitem in data_dict.get("items",[]):
       menu_item=MenuItems.objects.get(pk=orderitem.get("item_id"))
-      OrderItem.objects.create(
+      order_item=OrderItem.objects.create(
         order=order,
         menu_item=menu_item,
         price=menu_item.price,
         quantity=orderitem.get("quantity"),
         priority=menu_item.default_priority
       )
+
+      station_code = order_item.menu_item.station.code
+      channel_layer = get_channel_layer()
+      async_to_sync(channel_layer.group_send)(
+    f"kitchen_{station_code}",
+    {
+        "type": "new_order",
+        "order": {
+            "item_name": str(order_item),
+            "priority": order_item.priority,
+            "priority_display": order_item.get_priority_display(),
+        }
+    }
+)
       
       messages.success(request,"order created sucess")
    
@@ -104,3 +125,31 @@ def kitchen_station_dashboard_view(request):
    
 
 
+@role_required([User.ROLE_CHOICES.KITCHEN])
+def mark_item_ready(request, item_id):
+    order_item = OrderItem.objects.get(id=item_id)
+
+    order_item.status = OrderItem.ITEM_STATUS.READY
+    order_item.save()
+
+    channel_layer = get_channel_layer()
+
+    async_to_sync(channel_layer.group_send)(
+        "waiter_tables",
+        {
+            "type": "table_ready",
+            "table_id": order_item.order.table.id,
+        }
+    )
+
+    return redirect("kitchen_dashboard_station_view_url")
+
+@role_required([User.ROLE_CHOICES.WAITER])
+def served_conformation(request,order_item_id):
+   
+   if item_id is not None:
+      order_item=get_object_or_404(OrderItem,pk=order_item_id)
+      order_item.status=OrderItem.ITEM_STATUS.SERVED
+      order_item.save()
+      return redirect("menu_view_url") 
+   "order_item"=order_item

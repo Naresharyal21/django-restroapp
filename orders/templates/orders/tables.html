@@ -44,7 +44,7 @@ logout.addEventListener("click",()=>{
 
       {% for table in tables %}
       <a href="{% url 'menu_view_url' table.id %}">
-        <div class="h-48  flex items-center justify-center border rounded shadow shadow-red-500">
+        <div id="table-{{table.id}}" class="h-48  flex items-center justify-center border rounded shadow shadow-red-500">
           {{ table.name }}
         </div>
       </a>
@@ -60,6 +60,45 @@ logout.addEventListener("click",()=>{
     </p>
   </div>
 </div>
-  
+<script>
+const socket = new WebSocket(
+    `ws://${window.location.host}/ws/waiter/tables/`
+);
+
+socket.onmessage = function(event) {
+    const data = JSON.parse(event.data);
+
+    const tableCard = document.getElementById(`table-${data.table_id}`);
+
+    if (tableCard) {
+        tableCard.classList.add("blink-ready");
+    }
+};
+socket.onopen = function() {
+    console.log("Socket connected");
+};
+
+socket.onclose = function() {
+    console.log("Socket closed");
+};
+
+socket.onerror = function(error) {
+    console.log(error);
+};
+
+</script>
+
+
+<style>
+@keyframes blinkReady {
+    0% { background-color: #dcfce7; }
+    50% { background-color: #22c55e; }
+    100% { background-color: #dcfce7; }
+}
+
+.blink-ready {
+    animation: blinkReady 1s infinite;
+}
+</style>
 </body>
 </html>

@@ -128,6 +128,65 @@
         </div>
 
     </main>
+<script>
+    const stationCode = "{{ station }}";
+
+    const socket = new WebSocket(
+        `ws://${window.location.host}/ws/kitchen/${stationCode}/`
+    );
+
+    socket.onmessage = function(event) {
+        const data = JSON.parse(event.data);
+
+        const container = document.getElementById("orders-container");
+        const countBadge = document.getElementById("order-count");
+
+        const emptyMessage = container.querySelector(".empty-message");
+        if (emptyMessage) {
+            emptyMessage.remove();
+        }
+
+        let badgeClass = "bg-green-100 text-green-700";
+        let badgeText = "Low";
+
+        if (data.priority == 3 || data.priority == "3") {
+            badgeClass = "bg-red-100 text-red-700";
+            badgeText = "High";
+        } else if (data.priority == 2 || data.priority == "2") {
+            badgeClass = "bg-amber-100 text-amber-700";
+            badgeText = "Medium";
+        }
+
+        const card = document.createElement("div");
+        card.className = "border border-slate-200 rounded-xl p-4 hover:bg-slate-50 transition bg-green-50";
+
+        card.innerHTML = `
+            <div class="flex justify-between">
+
+                <div>
+                    <h3 class="font-semibold text-slate-900">
+                        ${data.item_name}
+                    </h3>
+
+                    <div class="mt-2 text-sm text-slate-500">
+                        Priority: ${data.priority_display}
+                    </div>
+                </div>
+
+                <span class="px-3 py-1 rounded-full text-xs font-semibold ${badgeClass}">
+                    ${badgeText}
+                </span>
+
+            </div>
+        `;
+
+        container.prepend(card);
+
+        countBadge.innerText = `${container.children.length} Items`;
+    };
+
+   
+</script>
 
 </body>
 </html>
